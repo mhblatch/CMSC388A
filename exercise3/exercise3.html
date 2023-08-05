@@ -1,0 +1,126 @@
+<html>
+  <head>
+    <title>
+      Exercise3
+    </title>
+  </head>
+  <body>
+    <!--Buttons corresponding to each function below-->
+    <button type="button" onclick="actionMovies()">Action Movies</button>
+    <button type="button" onclick="tomHanks()">Tom Hanks</button>
+    <button type="button" onclick="soo2017()">2017 Movies</button>
+    <button type="button" onclick="movieCount()">Movie Count</button>
+
+    <h2>Movie Lists</h2>
+    <hr />
+    <ul class="list"></ul>
+    <script>
+      const url =
+        "https://raw.githubusercontent.com/prust/wikipedia-movie-data/master/movies.json";
+
+      //DO NOT MODIFY fetch!
+      const movies = [];
+      fetch(url)
+        .then(resp => resp.json())
+        .then(data => movies.push(...data));
+
+      //Your task is to complete these four functions, according to the specifications
+      //Action Movies - Display a list of action movies that were released in 2018. Output: <movie_title> (<year>)
+      function actionMovies() {
+        let result = movies.filter( function (m){
+          return m.year == 2018;
+        })
+        result = result.filter( function (m){
+          let genres = m.genres
+          if(genres.includes("Action")){
+            return true;
+          }
+          return false;
+        })
+        result = result.map( function (m){
+          return `${m.title} (${m.year})`;
+        })
+        result = convertToHTML(result)
+        movieHTML.innerHTML = result
+        console.table(result)
+      }
+
+      //Tom Hanks - Display a list of all comedy movies that Tom Hanks acted in. Output: <movie_title> (<year>)
+      function tomHanks() {
+        let result = movies.filter( function (m){
+          let genres = m.genres
+          if(genres.includes("Comedy")){
+            return true;
+          }
+          return false;
+        })
+        result = result.filter( function (m){
+          let cast = m.cast
+          if(cast.includes("Tom Hanks")){
+            return true;
+          }
+          return false;
+        })
+        result = result.map( function (m){
+          return `${m.title} (${m.year})`;
+        })
+        result = convertToHTML(result)
+        movieHTML.innerHTML = result
+        console.table(result)
+      }
+
+      //Soo 2017 - Display a list of all movies that came out in 2017 sorted alphabetically by movie title. Output: <movie_title> (<year>)
+      function soo2017() {
+        let result = movies.filter( function (m){
+          return m.year == 2017;
+        })
+        result = result.sort(function(a,b){
+          return a.title < b.title? -1: a.title > b.title? 1: 0
+        });
+        result = result.map( function (m){
+          return `${m.title} (${m.year})`;
+        })
+        result = convertToHTML(result)
+        movieHTML.innerHTML = result
+        console.table(result)
+      }
+
+      //Movie Count - Display the number of movies that were released each year. Output: <year> : <number_of_movies>
+      function movieCount() {
+        let result = movies.reduce(function (yearCounter, movie){
+          let movieYear = movie.year
+          let yearText = movieYear.toString();
+          if(yearText in yearCounter){
+            yearCounter[yearText]++;
+          }else{
+            yearCounter[yearText] = 1;
+          }
+          return yearCounter;
+        }, [])
+
+        let years = movies.reduce(function (uniq, movie){
+          let movieYear = movie.year
+          let yearText = movieYear.toString();
+          return uniq.includes(yearText)? uniq: [...uniq, yearText];
+        }, [])
+
+
+        let formatted = years.map(function (y){
+          return ` ${y} : ${result[y]}`;
+        })
+        console.log(formatted)
+        result = convertToHTML(formatted)
+        movieHTML.innerHTML = result
+      }
+
+      //Function that converts arrays into seperate HTML list elements. (Hint: Use this!)
+      function convertToHTML(query) {
+        const results = query.map(movie => `<li>${movie}</li>`).join("");
+        return results;
+      }
+
+      //A javascript reference to the unordered list with classname list. (Hint: Use this!)
+      const movieHTML = document.querySelector(".list");
+    </script>
+  </body>
+</html>
